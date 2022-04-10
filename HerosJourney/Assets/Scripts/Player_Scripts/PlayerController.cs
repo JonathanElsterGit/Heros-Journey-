@@ -10,7 +10,9 @@ public class PlayerController : MonoBehaviour
 
     //Pubs
     public float MoveSpeed;
+    public LayerMask SolidObj;  
     //Privs
+    private Animator Anime;
     private bool IsMoving;
     private Vector2 PlayerInput;
 
@@ -34,10 +36,14 @@ public class PlayerController : MonoBehaviour
                 var TargetPos = transform.position; //Take the current object transform and assign it to a var
                 TargetPos.x += PlayerInput.x;// +=-1/1 if player pressed horizontally
                 TargetPos.y += PlayerInput.y;// +=-1/1 if player pressed vertically
-                StartCoroutine(Move(TargetPos));//Move over time to the target position 
+                if (IsWalkable(TargetPos))
+                {
+                    StartCoroutine(Move(TargetPos));//Move over time to the target position 
+                }
             }
         }
-        
+
+        //Anime.SetBool("IsMoving", isMoving); //Set animator transition at end of update so it is always current
     }
 
     IEnumerator Move(Vector3 TargetPos)//Move character over time instead of "teleporting" player 1 unit over;
@@ -53,5 +59,18 @@ public class PlayerController : MonoBehaviour
         transform.position = TargetPos; //reset target position to prevent unwanted movement.
         IsMoving = false; //allow a new target position
     }
+
+    private bool IsWalkable(Vector3 TargetPos)
+    {
+        if(Physics2D.OverlapCircle(TargetPos, 0.05f, SolidObj) != null)
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+
+
 
 }
